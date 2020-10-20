@@ -12,9 +12,9 @@ import TierMogiPicklable
 from typing import List, Tuple
 import random
 
-DEFAULT_MOGI_SIZE = 12
+DEFAULT_MOGI_SIZE = 8
 MAX_SUBS = 3
-DEFAULT_RUNNER_SIZE = 12
+DEFAULT_RUNNER_SIZE = 8
 DEFAULT_BAGGER_SIZE = 0
 canning_terms = {"c","can", "run", "canrun"}
 can_host_terms = {"ch", "canhost"}
@@ -36,7 +36,7 @@ notify_terms = {"notify"}
 movelu_terms = {"movelu", "movelineup"}
 votes_terms = {"votes"}
 teams_terms = {"teams"}
-valid_votes = {"6":6, "4":4, "3":3, "2":2, "1":1}
+valid_votes = {"4":4, "2":2, "1":1}
 QUEUE_ERRORS = {0:"success", 1:"is already in the war", 2:"cannot play in this tier", 3:"war alread has max type", 4:"war is completely full", 5:"switched roles"}
 
 runner_captain_probability_dist = [.75, .25]
@@ -86,7 +86,7 @@ can_movelu = can_ping
 LIST_WAIT_TIME = timedelta(seconds=20)
 ESN_WAIT_TIME = timedelta(minutes=40)
 VOTING_TIME = timedelta(minutes=2)
-PING_INTERVAL = timedelta(minutes=10)
+PING_INTERVAL = timedelta(minutes=30)
 ML_WAIT_TIME = timedelta(seconds=15)
 MLLU_WAIT_TIME = timedelta(seconds=45)
 MMR_LU_WAIT_TIME = timedelta(seconds=30)
@@ -189,8 +189,8 @@ class TierMogi(object):
         all_names = [player.member.display_name.replace(" ","") for team in self.teams for player in team]
         if self.mogi_format == "1":
             team_msg += "There are no teams for **FFA**"
-        elif self.mogi_format == "6":
-            team_msg += "Ask captains what the teams are for **6v6**"
+        elif self.mogi_format == "4":
+            team_msg += "Ask captains what the teams are for **4v4**"
         
         else:
             team_msg = "Teams for **" + self.mogi_format + "v" + self.mogi_format + "**:"
@@ -263,8 +263,8 @@ class TierMogi(object):
             return COMBINED_MOGI_TOO_LARGE, None
         
         
-        bagger_count = sum(1 for p in hypothetical_new_mogi_list[:11] if p.is_bagger())
-        runner_count = sum(1 for p in hypothetical_new_mogi_list[:11] if p.is_runner())
+        bagger_count = sum(1 for p in hypothetical_new_mogi_list[:DEFAULT_MOGI_SIZE] if p.is_bagger())
+        runner_count = sum(1 for p in hypothetical_new_mogi_list[:DEFAULT_MOGI_SIZE] if p.is_runner())
         
         if bagger_count > DEFAULT_BAGGER_SIZE:
             return TOO_MANY_BAGGERS, None
@@ -407,6 +407,7 @@ class TierMogi(object):
         if self.isFull() or not self.hasHalfOrMore():
             return False
         return Shared.has_authority(author, can_ping)
+      
     def _can_esn(self, author:discord.Member):
         if self.start_time != None:
             time_passed = datetime.now() - self.start_time
@@ -719,7 +720,7 @@ class TierMogi(object):
         msg_str += "\n"
         
         for mogi in mogis:
-            msg_str += "\n" + mogi.channel.mention + " - " + str(len(mogi.mogi_list)) + "/12"
+            msg_str += "\n" + mogi.channel.mention + " - " + str(len(mogi.mogi_list)) + "/" + str(DEFAULT_MOGI_SIZE)
             if mogi.mogi_format != None:
                 to_add = "FFA"
                 if mogi.mogi_format != "1":
@@ -987,14 +988,14 @@ class TierMogi(object):
             await self.send_removed_because_full(to_send)
                 
                 
-            str_msg += "\n\nThere are 12 players in the mogi. The mogi has started.\n\nVote for the format you want to play: 1, 2, 3, 4, or 6"
+            str_msg += "\n\nThere are " + str(DEFAULT_MOGI_SIZE) + " players in the mogi. The mogi has started.\n\nVote for the format you want to play: 1, 2, or 4"
             
             
             if show_mmr:
                 if not Shared.war_lounge_live:
                     str_msg += self.get_mmr_str(double_line=True)
             
-            self.votes = {"1":set(), "2":set(), "3":set(), "4":set(), "6":set()}
+            self.votes = {"1":set(), "2":set(), "4":set()}
             self.vote_author_mapping = {}
             
             self.set_host_string()
