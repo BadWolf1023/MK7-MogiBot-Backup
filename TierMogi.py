@@ -467,6 +467,7 @@ class TierMogi(object):
         return self.start_time != None
     
     def get_mmr_str(self, double_line=True):
+        return ""
         if not Shared.war_lounge_live:
             mmr_str = ""
             if double_line:
