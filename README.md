@@ -1,4 +1,4 @@
-# MogiBot-Backup
+# MK7-MogiBot-Backup
 This is a Python rewrite of 255MP's MogiBot, with some minor changes - this is configured just for MK7 Lounge, with their requested settings.
 
 Minor changes:
