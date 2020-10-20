@@ -602,7 +602,7 @@ class TierMogi(object):
     #Sending message functions
     async def send_esn(self, message:discord.Message):
         self.last_ping_time = datetime.now()
-        await message.channel.send(message.author.display_name + " has started a mogi -- @here `!can` if not playing")
+        await message.channel.send(message.author.display_name + " has started a mogi -- `!can` if not playing")
     
     
     async def send_remove(self, message:discord.Message, removed:discord.Member):
