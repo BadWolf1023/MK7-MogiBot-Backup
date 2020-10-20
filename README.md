@@ -1,5 +1,5 @@
 # MogiBot-Backup
-This is a Python rewrite of 255MP's MogiBot, with some minor changes
+This is a Python rewrite of 255MP's MogiBot, with some minor changes - this is configured just for MK7 Lounge, with their requested settings.
 
 Minor changes:
 - Instead of !3 or !4 to ping, just do !p and the bot will ping with the correct number.
