@@ -17,7 +17,7 @@ MAX_SUBS = 3
 DEFAULT_RUNNER_SIZE = 8
 DEFAULT_BAGGER_SIZE = 0
 canning_terms = {"c","can", "run", "canrun"}
-can_host_terms = {"ch", "canhost"}
+can_host_terms = set()
 all_canning_terms = canning_terms | can_host_terms
 
 bagging_terms = {"b", "bag", "canbag", "cb"}
@@ -161,9 +161,6 @@ class TierMogi(object):
         if self.start_time == None:
             return False
         
-        time_passed = datetime.now() - self.start_time
-        if time_passed >= WAY_OVERTIME:
-            return False
         #It has started... has the format been decided?
         return self.mogi_format == None
         
@@ -181,7 +178,7 @@ class TierMogi(object):
     
     async def send_teams_message(self):
         self.last_team_time = datetime.now()
-        
+        teams_mapping = {1:"A",2:"B",3:"C",4:"D"}
         if self.teams == None:
             await self.channel.send("No teams yet.", delete_after=medium_delete)
             return
@@ -198,9 +195,9 @@ class TierMogi(object):
                 players_per_team = int(valid_votes[self.mogi_format])
                 start_splice = (ind-1)*players_per_team
                 end_splice = start_splice + players_per_team
-                team_msg += "\n`Team " + str(ind) + "`: " + ", ".join(all_names[start_splice:end_splice])
+                team_msg += "\n`Team " + teams_mapping[ind] + "`: " + ", ".join(all_names[start_splice:end_splice])
         
-        if len(self.host_string) > 0:
+        if False and len(self.host_string) > 0:
             team_msg += "\n\n" + self.host_string
         team_msg += "\n\nTable: `!scoreboard " + str(int(DEFAULT_MOGI_SIZE/valid_votes[self.mogi_format])) + " " + " ".join(all_names) + "`"
         
@@ -673,7 +670,7 @@ class TierMogi(object):
                     list_str += " (bagger)"
                 if player.is_host():
                     list_str += " (host)"
-            if len(self.host_string) > 0:
+            if False and len(self.host_string) > 0:
                 list_str += "\n\n" + self.host_string
             self.last_list_time = datetime.now()
             if show_mmr:
